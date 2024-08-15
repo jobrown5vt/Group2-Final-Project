@@ -1,3 +1,5 @@
 const User = require('./User');
+const HighScore = require('./highScore');
+module.exports = { User, HighScore };
 
-module.exports = { User };
+// Above, we export our schemas 
