@@ -1,4 +1,7 @@
 const { Schema, model } = require("mongoose");
+const dateFormat = require('../utils/dateFormat');
+// Above, we import our custom date format utility.
+
 
 const highScoreSchema = new Schema(
   {
@@ -14,7 +17,8 @@ const highScoreSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      get: (timestamp) => dateFormat(timestamp),
+      get: (timestamp) => dateFormat(timestamp)
+      // Above, we use our date format with get and also set the default to Date.now
     },
   },
 

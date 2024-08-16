@@ -29,7 +29,7 @@ const hashPasswords = async (users) => {
 };
 
 // Above is our function to has the passwords in our seeds.
-// Our async function accepts a array and and uses promise.all and map to has the password and return a new hashed password and new object.
+// Our async function accepts a array and and uses promise.all and map to has the password and return a new hashed password and new object array with hashed passwords.
 
 const seedUserData = async () => {
   try {
