@@ -1,7 +1,7 @@
 import React from  'react';
-// import TopNav from './assets/Components/login';
-import Login from '../assets/Components/Login'
-// import './index.css'
+
+import Login from '../components/Login'
+
 const Home =() => {
   return (
     <div>
@@ -9,5 +9,7 @@ const Home =() => {
     </div>
   );
 }
+
+// Above is our home page that takes in an import from our login page.
 
 export default Home;

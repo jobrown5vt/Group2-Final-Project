@@ -1,6 +1,6 @@
 import React from  'react';
 
-import Leaders from '../assets/Components/Leaders';
+import Leaders from '../components/Leaders';
 
 const LeaderBoard =() => {
   return (
@@ -9,5 +9,7 @@ const LeaderBoard =() => {
     </div>
   );
 }
+
+// Above is our leaderBoard page that takes in our leaders component.
 
 export default LeaderBoard;
