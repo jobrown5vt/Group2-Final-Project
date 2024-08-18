@@ -225,10 +225,15 @@ float: right;
 }
 
 .lineArea{
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* Allows lines to wrap to the next line if they overflow */
+    max-width: 100%; /* Ensure it doesn't exceed the container */
+    padding: 10px; /* Optional padding for spacing */
+    box-sizing: border-box; /* Includes padding in the width calculation */
   gap: 10px;
+  
 }
 
 

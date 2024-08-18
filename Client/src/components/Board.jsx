@@ -5,9 +5,13 @@
 
 
 
-function generateKeypad() {
+function generateKeypad({handleGuess,isDisabled}) {
   const letters = "abcdefghijklmnopqrstuvwxyz";
   // Above we create the letters for our board
+  // Also, we pass in our props to use for this function.
+
+
+  
 
   return (
     <section className="container-fluid keys ">
@@ -19,8 +23,9 @@ function generateKeypad() {
             className="key"
               key={index}
               value={letter}
-              //onClick={}
-              // disabled={this.state.guessed.has(letter)}
+              onClick={()=> handleGuess(letter)}
+              disabled={isDisabled}
+              // Above is where we use our passsed in crops
             >
               {letter}
             </button>
