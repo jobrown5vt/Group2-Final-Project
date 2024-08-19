@@ -13,7 +13,7 @@ const typeDefs = gql`
 
   type HighScore {
     _id: ID
-    highScoreTotal: String
+    highScoreTotal: Int
     highScoreName: String
     createdAt: String
   }
