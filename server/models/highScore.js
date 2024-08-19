@@ -6,7 +6,7 @@ const dateFormat = require('../utils/dateFormat');
 const highScoreSchema = new Schema(
   {
     highScoreTotal: {
-      type: String,
+      type: Number,
       trim: true,
     },
     highScoreName: {

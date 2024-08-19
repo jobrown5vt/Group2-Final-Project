@@ -23,7 +23,7 @@ const TopNav = () => {
         Leaderboard{" "}
       </Link>
       
-        <Link className="logout" to="/Logout">
+        <Link className="logout" to="/">
           Logout
         </Link>
       

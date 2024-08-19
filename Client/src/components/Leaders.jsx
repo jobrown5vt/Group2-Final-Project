@@ -1,8 +1,12 @@
 import React from "react";
 import Table from "react-bootstrap/Table";
 import Header from "./Header";
-
+import {useQuery} from "@apollo/client";
+import {QUERY_HIGHSCORE} from "../utils/queries";
 const LeaderBoard = () => {
+  const {data,loading,error} = useQuery(QUERY_HIGHSCORE)
+    const highScores = data?.highScores|| []
+    console.log("highscores!", highScores)
   return (
     <>
       <Header />
@@ -17,21 +21,18 @@ const LeaderBoard = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>Username</td>
-                <td>15</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Second user</td>
-                <td>12</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Larry the Bird</td>
-                <td>5</td>
-              </tr>
+              {
+                highScores&&highScores.map((score, index) => (
+                  <tr>
+                  <td>{index+1}</td>
+                  <td>{score.highScoreName}</td>
+                  <td>{score.highScoreTotal}</td>
+                </tr>
+
+                )
+              ) 
+              }
+              
             </tbody>
           </Table>
         </section>
