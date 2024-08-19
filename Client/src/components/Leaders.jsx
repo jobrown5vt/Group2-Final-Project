@@ -1,12 +1,27 @@
 import React from "react";
 import Table from "react-bootstrap/Table";
 import Header from "./Header";
-import {useQuery} from "@apollo/client";
-import {QUERY_HIGHSCORE} from "../utils/queries";
+
+// Above are our imports for the UI
+
+import { useQuery } from "@apollo/client";
+import { QUERY_ORDERED_HIGHSCORE } from "../utils/queries";
+
+// Above are our imports for our queries
+
 const LeaderBoard = () => {
-  const {data,loading,error} = useQuery(QUERY_HIGHSCORE)
-    const highScores = data?.highScores|| []
-    console.log("highscores!", highScores)
+  const { data, loading, error } = useQuery(QUERY_ORDERED_HIGHSCORE);
+  const highScores = data?.usersSortedByMostRecentHighScore || [];
+  console.log("highscores!", highScores);
+
+  // Above we query the data
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) return <p>Error: {error.message}</p>;
+
   return (
     <>
       <Header />
@@ -21,19 +36,21 @@ const LeaderBoard = () => {
               </tr>
             </thead>
             <tbody>
-              {
-                highScores&&highScores.map((score, index) => (
-                  <tr>
-                  <td>{index+1}</td>
-                  <td>{score.highScoreName}</td>
-                  <td>{score.highScoreTotal}</td>
-                </tr>
-
-                )
-              ) 
-              }
-              
+              {highScores &&
+                highScores.map((score, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{score.username}</td>
+                    <td>
+                      {score.mostRecentHighScore
+                        ? score.mostRecentHighScore.highScoreTotal
+                        : "No Score"}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
+            {/*Above, we use our queried data to create a page. */}
+            {/*Also, check if high score exists and handle it with no score if it doesnt. */}
           </Table>
         </section>
       </div>
