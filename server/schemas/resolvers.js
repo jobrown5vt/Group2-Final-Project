@@ -2,6 +2,9 @@ const { User, HighScore } = require("../models");
 
 // Above, we import our models
 
+const { signToken, AuthenticationError } = require("../utils/auth");
+// Above we import our signed token
+
 const resolvers = {
   Query: {
     users: async () => {
@@ -10,7 +13,7 @@ const resolvers = {
 
     // Above is our users query that returns all users with .find and populates the highscores using "highscore"  name in our schema.
     highScores: async () => {
-      return await HighScore.find({}).sort({highScoreTotal:-1});
+      return await HighScore.find({}).sort({ highScoreTotal: -1 });
     },
     // Above, is our highscores query that populates all the highscores in our db.
 
@@ -34,6 +37,65 @@ const resolvers = {
       }
     },
     // Above is our query to get one user by id and thier highscores as well.
+
+    usersSortedByMostRecentHighScore: async () => {
+      try {
+        const users = await User.find({}).populate("highScore");
+        // Above, we fetch all users from the database
+
+        const usersWithRecentHighScores = users.map((user) => {
+          if (!Array.isArray(user.highScore)) {
+            return {
+              ...user._doc,
+              mostRecentHighScore: null,
+            };
+          }
+
+
+
+          const mostRecentHighScore =
+            user.highScore.sort(
+              (a, b) => b.highScoreTotal - a.highScoreTotal
+            )[0] || null;
+          // Above, we Sort highScores by highScoreTotal in descending order and get the highest one
+
+          return {
+            ...user._doc,
+            mostRecentHighScore,
+          };
+          // Above, we add the most recent high score to the user object
+        });
+
+        // Above, we map over users to find their most recent high score
+
+        const sortedUsers = usersWithRecentHighScores.sort((a, b) => {
+          const scoreA = a.mostRecentHighScore
+            ? a.mostRecentHighScore.highScoreTotal
+            : 0;
+          const scoreB = b.mostRecentHighScore
+            ? b.mostRecentHighScore.highScoreTotal
+            : 0;
+          return scoreB - scoreA;
+        });
+        //  Above, we sort users by their most recent high score in descending order
+        // Note * Above, is our sort function that compares the values in a array.
+        return sortedUsers;
+
+        // ABove we return our sorted users
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        throw new Error("Failed to fetch users");
+      }
+    },
+
+    // Above is our query for sorted highscores.
+
+    me: async (parent, args, context) => {
+      if (context.user) {
+        return Profile.findOne({ _id: context.user._id });
+      }
+      throw AuthenticationError;
+    },
   },
 
   // Define the functions that will fulfill the mutations
@@ -41,16 +103,28 @@ const resolvers = {
     addUser: async (parent, { username, email, password }) => {
       // Create and return the new School object
       try {
-        return await User.create({ username, email, password });
+        const newUser = await User.create({ username, email, password });
+        const token = signToken(newUser);
+        return { token, user : newUser };
       } catch (error) {
         console.error("Error adding user:", error);
         throw new Error("Failed to add user");
       }
     },
     // Above, is our resolver to add a new user.
+    // We also attach a token whenever a new user is added
 
-    addHighScore: async (parent, { highScoreTotal, highScoreName }) => {
+    addHighScore: async (
+      parent,
+      { highScoreTotal, highScoreName },
+      context
+    ) => {
       try {
+        if (!context.user) {
+          throw AuthenticationError;
+        }
+        // Above is to check if user is logged in before making request
+
         // Above, is our create a new high score mutation
         const user = await User.findOne({ username: highScoreName });
         if (!user) {
@@ -77,8 +151,13 @@ const resolvers = {
     },
     // Above is our resolver to add a highscore and attach it to its respective user.
 
-    deleteUser: async (parent, { username }) => {
+    deleteUser: async (parent, { username }, context) => {
       try {
+        if (!context.user) {
+          throw AuthenticationError
+        }
+        // Above is to check if user is logged in before making request
+
         const user = await User.findOne({ username });
         // Above, we find a user by username
 
@@ -105,6 +184,29 @@ const resolvers = {
       }
     },
     // Above is our resolver to delete a user and thier highscores
+
+    login: async (parent, { email, password }) => {
+      try {
+        const profile = await User.findOne({ email });
+        // Above, we find the the user by email
+
+        if (!profile) {
+          throw AuthenticationError;
+        }
+
+        const correctPw = await User.comparePassword(password);
+
+        if (!correctPw) {
+          throw AuthenticationError;
+        }
+
+        const token = signToken(profile);
+        return { token, profile };
+      } catch (error) {
+        console.error("Error logging user in:", error);
+        throw new Error("Failed to Log in!");
+      }
+    },
   },
 };
 

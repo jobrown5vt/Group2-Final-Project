@@ -34,6 +34,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+// Above, we add the token in the Authorization header
 
 
 const App =() => {
