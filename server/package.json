@@ -13,12 +13,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "apollo-server": "^3.13.0",
-    "apollo-server-express": "^3.13.0",
+    "@apollo/server": "^4.7.1",
     "argon2": "^0.40.3",
     "dateformat": "^5.0.3",
     "express": "^4.19.2",
-    "graphql": "^16.9.0",
+    "graphql": "^16.6.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.3"
   },
