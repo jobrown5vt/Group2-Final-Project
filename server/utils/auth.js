@@ -12,9 +12,9 @@ module.exports = {
   }),
   authMiddleware: function ({ req }) {
     
-    // if (!req) {
-    //   throw new Error('Request object is undefined or null');
-    // }
+    if (!req) {
+      return req;
+    }
 
 
 
