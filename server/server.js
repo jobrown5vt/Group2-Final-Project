@@ -1,6 +1,7 @@
 const express = require("express");
+const { expressMiddleware } = require('@apollo/server/express4');
 
-const { ApolloServer, gql } = require("apollo-server-express");
+const { ApolloServer } = require('@apollo/server');
 
 // Above, we import express from express
 // Also, we import ApolloServer and gql from apollo-server-express
