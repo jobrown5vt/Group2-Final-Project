@@ -158,6 +158,7 @@ function HangManGame() {
             highScoreTotal: newHighScore,
             highScoreName: username,
           },
+          
         }).catch((err) => {
           console.error("Error adding high score:", err.message);
         });
@@ -173,7 +174,7 @@ function HangManGame() {
 
       return () => clearTimeout(timer);
     }
-  }, [mistakes, guessedLetters, data, addHighScore]);
+  }, [mistakes, guessedLetters,  data,  addHighScore]);
 
   // Above, we use the use effect hook which is responisible for checking our game status.
   // This function will run after ever render
@@ -188,7 +189,7 @@ function HangManGame() {
   if (error) return <p>Error: {error.message}</p>;
 
   console.log(data);
-  console.log("Highscore data:", data.me.highscore);
+  console.log("Highscore data:", data.me.highScore);
 
   return (
     <div className="container-fluid backGround ">
@@ -207,8 +208,8 @@ function HangManGame() {
         <div>
           <h4 className="highScore">
             High Score:
-            {Array.isArray(data.highscore) && data.highscore.length > 0
-              ? data.highscore.at(-1).highScoreTotal || "0"
+            {Array.isArray(data.me.highScore) && data.me.highScore.length > 0
+              ? data.me.highScore.at(-1).highScoreTotal || "0"
               : "0"}
           </h4>
         </div>
