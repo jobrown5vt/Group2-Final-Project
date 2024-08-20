@@ -1,4 +1,4 @@
-import React from "react";
+
 import Table from "react-bootstrap/Table";
 import Header from "./Header";
 
@@ -6,6 +6,9 @@ import Header from "./Header";
 
 import { useQuery } from "@apollo/client";
 import { QUERY_ORDERED_HIGHSCORE } from "../utils/queries";
+import React, { useState, useEffect } from "react";
+import Auth from "../utils/auth"; // Import AuthService
+
 
 // Above are our imports for our queries
 
@@ -15,6 +18,17 @@ const LeaderBoard = () => {
   console.log("highscores!", highScores);
 
   // Above we query the data
+
+  useEffect(() => {
+    if (!Auth.loggedIn()) {
+      window.location.replace('/'); // Redirect to login if not authenticated
+    }
+  }, []);
+
+  // Above is our authentication before giving access to this page.
+
+
+
 
   if (loading) {
     return <div>Loading...</div>;

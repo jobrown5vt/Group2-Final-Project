@@ -49,3 +49,28 @@ query User($userId: ID!) {
 `;
 
 // Above is a query to recieve a single User and their highscores.
+
+
+
+
+
+
+export const QUERY_ME = gql`
+query Me {
+  me {
+    _id
+    username
+    email
+    password
+    highScore {
+      _id
+      highScoreTotal
+      highScoreName
+      createdAt
+    }
+  }
+}
+
+
+  
+`;

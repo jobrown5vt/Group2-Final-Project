@@ -54,9 +54,22 @@ float: right;
 
 /* end of antonio css */
 
-.logout{
-  color: black;
+
+
+.logout {
+  background: none;          /* Remove background */
+  border: none;              /* Remove border */
+  color: black ;            /* Link color */
+  text-decoration: underline;/* Underline text like a link */
+  font-size: 16px;           /* Adjust font size as needed */
+  cursor: pointer;           /* Pointer cursor on hover */
+  padding: 0;                /* Remove default padding */
 }
+
+
+
+
+
 .logout:hover{
   color:#d4330a !important ;
 }
@@ -246,6 +259,10 @@ float: right;
   
   
   
+}
+
+.info{
+  font-size: x-small;
 }
 
 
