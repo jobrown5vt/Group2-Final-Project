@@ -23,14 +23,7 @@ const PORT = process.env.PORT || 3001;
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers,
-  context: ({ req }) => {
-    // Apply authMiddleware to handle authentication and context setup
-    const context = authMiddleware({ req });
-    return context;
-    // Note* Above is very important for acessing you token.
-  },
-
+  resolvers
 });
 
 // Above we create a new instance of the ApolloServer with our typedefs and resolvers.
@@ -42,18 +35,12 @@ const app = express();
 const startApolloServer = async () => {
   await server.start();
 
-  // Above we await for our apollo server to start
-  server.applyMiddleware({ app, path: "/graphql" });
-
-  // Above, we apply our express instance as  Middleware to our server and specify a path
-
-  app.use(authMiddleware);
-
   app.use(express.urlencoded({ extended: false }));
-
   app.use(express.json());
 
-  // Above are our custom middleware for our express instance to recieve data
+  app.use('/graphql', expressMiddleware(server, {
+    context: authMiddleware
+  }));
 
   if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../client/dist")));
