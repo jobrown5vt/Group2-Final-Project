@@ -8,6 +8,12 @@ import image3 from "../assets/3.png";
 import image4 from "../assets/4.png";
 import image5 from "../assets/5.png";
 import image6 from "../assets/6.png";
+import { useMutation } from "@apollo/client";
+
+import { useQuery, gql } from "@apollo/client";
+import { QUERY_ME } from "../utils/queries";
+import Auth from "../utils/auth"; // Import AuthService
+import { ADD_HIGH_SCORE } from "../utils/mutations"; // Import the mutation
 
 let words = [
   "music",
@@ -46,6 +52,8 @@ function HangManGame() {
   const [gameStatus, setGameStatus] = useState(null);
   const [isKeypadDisabled, setIsKeypadDisabled] = useState(false);
   const maxMistakes = 6; // Maximum allowed mistakes
+
+  const [addHighScore] = useMutation(ADD_HIGH_SCORE);
 
   // Above are all our state values
 
@@ -110,18 +118,63 @@ function HangManGame() {
   // we use this in our use effect hook once we determine if a game is over.
 
   useEffect(() => {
+    if (!Auth.loggedIn()) {
+      window.location.replace("/"); // Redirect to login if not authenticated
+    }
+  }, []);
+
+  const { loading, error, data } = useQuery(QUERY_ME);
+
+  useEffect(() => {
     const status = getGameStatus();
+
     if (status) {
+      if (status === "win") {
+        // Ensure highScore is defined and handle cases where fields might be null
+        const currentHighScores = data?.me?.highScore || [];
+
+        // Check if highScores is an array and get the last entry or default to '0'
+        const lastHighScore =
+          currentHighScores.length > 0
+            ? currentHighScores.at(-1)
+            : { highScoreTotal: "0" };
+
+        // Get the high score total from the last high score object or default to '0'
+        const highScoreTotal = lastHighScore.highScoreTotal || "0";
+        const currentHighScoreNumber = parseInt(highScoreTotal, 10);
+
+        if (isNaN(currentHighScoreNumber)) {
+          console.error("Invalid current high score:", highScoreTotal);
+          return;
+        }
+
+        // Calculate new high score and convert to string
+        const newHighScore = (currentHighScoreNumber + 1).toString();
+        const username = data?.me?.username || "Anonymous"; // Fetch username
+
+        // Add the new high score
+        addHighScore({
+          variables: {
+            highScoreTotal: newHighScore,
+            highScoreName: username,
+          },
+          
+        }).catch((err) => {
+          console.error("Error adding high score:", err.message);
+        });
+      }
+
       setGameStatus(status);
       setIsKeypadDisabled(true);
+
       const timer = setTimeout(() => {
         setIsKeypadDisabled(false);
         resetGame();
-      }, 5000); // 5 seconds
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
-  }, [mistakes, guessedLetters]);
+  }, [mistakes, guessedLetters,  data,  addHighScore]);
 
   // Above, we use the use effect hook which is responisible for checking our game status.
   // This function will run after ever render
@@ -129,6 +182,14 @@ function HangManGame() {
   // If game status is null it will return nothing
   // mistakes and guessedletters are our dependey arrays for this.
   // Also, we manage enabeling and disabling the keypad here.
+
+  if (loading) return <p>Loading...</p>;
+
+  // Handle error state
+  if (error) return <p>Error: {error.message}</p>;
+
+  console.log(data);
+  console.log("Highscore data:", data.me.highScore);
 
   return (
     <div className="container-fluid backGround ">
@@ -145,7 +206,12 @@ function HangManGame() {
         )}
 
         <div>
-          <h4 className="highScore">HighScore:</h4>
+          <h4 className="highScore">
+            High Score:
+            {Array.isArray(data.me.highScore) && data.me.highScore.length > 0
+              ? data.me.highScore.at(-1).highScoreTotal || "0"
+              : "0"}
+          </h4>
         </div>
 
         <div className="gameDisplay ">
