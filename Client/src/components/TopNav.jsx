@@ -1,8 +1,20 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import Auth from '../utils/auth';
+
+
+
+
 
 const TopNav = () => {
   const currentPage = useLocation().pathname;
+
+  const handleLogout = () => {
+    Auth.logout(); // Clear the token and redirect
+  };
+
+
+
   return (
 
     <div className="container-fluid  ">
@@ -23,9 +35,9 @@ const TopNav = () => {
         Leaderboard{" "}
       </Link>
       
-        <Link className="logout" to="/">
+        <button className="logout" onClick={handleLogout} >
           Logout
-        </Link>
+        </button>
       
     </div>
    </section>
